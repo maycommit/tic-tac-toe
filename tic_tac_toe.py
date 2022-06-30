@@ -1,5 +1,6 @@
 from game import Game
 from minimax import Minimax
+from alphabeta import Alphabeta
 
 class TicTacToe:
     def __init__(self) -> None:
@@ -8,7 +9,7 @@ class TicTacToe:
         self.board = None
         self.current_player = None
         self.game = Game(self.player1, self.player2)
-        self.algorithm = Minimax(self.game)
+        self.algorithm = Alphabeta(self.game)
 
     def init_game(self):
         self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
