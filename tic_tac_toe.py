@@ -15,14 +15,14 @@ class TicTacToe:
         self.current_player = self.player1
 
     def is_finished(self):
-        if self.game.is_tie(self.board):
-            print("Is a tie :(")
-            return True
         if self.game.is_win(self.board, self.player1):
             print("Player 1 wins!")
             return True
         if self.game.is_win(self.board, self.player2):
             print("Player 2 wins!")
+            return True
+        if self.game.is_tie(self.board):
+            print("Is a tie :(")
             return True
 
         return False
