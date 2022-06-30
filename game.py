@@ -1,4 +1,5 @@
 import copy
+import random
 from action import Action
 from result import Result
 
@@ -34,14 +35,23 @@ class Game:
 
     def actions(self, state, player):
         a = []
-        for x in range(len(state)):
-            for y in range(len(state[x])):
-                if state[x][y] == "":
-                    state[x][y] = player
-                    new_state = copy.deepcopy(state)
-                    new_action = Action(new_state, x, y)
-                    a.append(new_action)
-                    state[x][y] = ""
+        positions = [
+            [0, 0], [0, 1], [0, 2],
+            [1, 0], [1, 1], [1, 2],
+            [2, 0], [2, 1], [2, 2],
+        ]
+
+        while len(positions) > 0:
+            i = random.randint(0, len(positions) - 1)
+            x, y = positions[i]
+            if state[x][y] == "":
+                state[x][y] = player
+                new_state = copy.deepcopy(state)
+                new_action = Action(new_state, x, y)
+                a.append(new_action)
+                state[x][y] = ""
+
+            positions.pop(i)
 
         return a
 
