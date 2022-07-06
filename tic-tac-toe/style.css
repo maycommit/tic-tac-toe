@@ -1,0 +1,286 @@
+/* basic */
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #121214;
+    padding: 0;
+    margin: 0;
+}
+
+.fa-times {
+    color: #8257E5;
+}
+
+.fa-circle {
+    color: #04D361;
+}
+
+/* header */
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 5%;
+
+
+}
+
+header h1 {
+    text-align: center;
+    font-size: 4.5em;
+    color: #8257E5;
+}
+
+header h2 {
+    text-align: center;
+    font-size: 1.5em;
+    color: #fff;
+}
+
+/* status */
+
+.block-status {
+    margin-top: 3%;
+    padding: 10px 50px;
+    width: 200px;
+    border-radius: 5px;
+}
+
+.status {
+    text-align: center;
+    color: #fff;
+    font-size: 1.2em;
+    text-transform: uppercase;
+}
+
+/* reset game*/
+
+.block-reset {
+    background-color: #04D361;
+    padding: 10px 20px;
+    
+    width: 200px;
+    border-radius: 5px;
+}
+
+.reset {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+/* game */
+
+.game {
+    display: flex;
+    flex-wrap: wrap;
+    width: 512px;
+    margin: 2% auto;
+}
+
+.block {
+    width: 170px;
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c7c8ca;
+}
+
+.block:nth-child(-n+3) {
+    border-top: none;
+    border-bottom: none;
+}
+
+.block:nth-child(1n + 1) {
+    border-right: none;
+}
+
+.block:nth-child(3n + 1) {
+    border-left: none;
+}
+
+.block:nth-child(1n + 3) {
+    border-bottom: none;
+}
+
+.block i {
+    font-size: 5em;
+}
+
+/* footer */
+
+footer {
+   display: flex;
+   justify-content: center;
+   margin-top: 5%;
+}
+
+.footer-content{
+    border-radius: 10px;
+    background-color: #8257E51A;
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(to right, #04D361 0%, #8257E5 100%);
+    border-image-slice: 1; 
+    display: flex;
+    padding: 1%;
+    width: 700px;
+}
+
+.points {
+    color: #fff;
+    min-width: 33.3333%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.icon-points {
+    padding: 0 10px 0 0;
+    margin: 0 10px;
+    border-right: 2px solid #8257E5;
+}
+
+footer i {
+    color: #8257E5;
+    font-size: 2em;
+}
+
+.points-title {
+    color: #8257E5;
+    font-weight: 700;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.text-points {
+    text-align: center;
+}
+
+.percentage {
+    color: #04D361;
+}
+
+/* modal */
+
+.modal {
+    background-color: #303030D8;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.modal-content {
+    width: 40%;
+    height: 40%;
+    background-color: #121212;
+    box-shadow: 0px 0px 30px 0px #00000073;
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 15%;
+    padding: 1% 2%;
+}
+
+.modal h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 2em;
+    padding: 15px 0;
+    color: #fff;
+}
+
+.modal .choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.modal i {
+    padding: 2% 5%;
+    margin: 7% 2%;
+    font-size: 7em;
+}
+
+/* hidden */
+
+.hidden {
+    display: none;
+}
+
+/* responsiveness */
+
+@media (max-width: 800px) {
+    .block-reset, .block-status {
+        padding: 10px 0;
+        margin: 0 auto;
+        width: 302px;
+    }
+    .game {
+        margin: 5% auto;
+        display: flex;
+        width: 500px;
+    }
+    .block {
+        width: 166px;
+        height: 166px;
+    }
+    footer {
+        width: 500px;
+    }
+    .points {
+        flex-direction: column;
+    }
+    .icon-points {
+        padding: 0 0 10px 0;
+        margin: 10px 0;
+        border-right: 0px;
+        border-bottom: 2px solid #8257e5;
+    }
+    .value-points {
+        text-align: center;
+    }
+    .modal-content {
+        width: 60%;
+        height: 40%;
+        margin-top: 20%;
+    }
+}
+
+@media (max-width: 540px) {
+    .game {
+        width: 302px;
+    }
+    .block {
+        width: 100px;
+        height: 100px;
+    }
+    header h1 {
+        font-size: 3em;
+    }
+    header h2 {
+        font-size: 1em;
+    }
+    footer {
+        width: 302px;
+        flex-direction: column;
+    }
+    .modal-content {
+        width: 80%;
+        height: 60%;
+        margin-top: 20%;
+    }
+}

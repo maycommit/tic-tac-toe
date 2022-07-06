@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/b775c270a3.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <h1>Tic-Tac-Toe</h1>
+        <div class="block-reset" onclick="resetGame()">
+          <p class="reset">New Game</p>
+        </div>
+
+        <div class="block-status">
+          <p class="status"></p>
+        </div>
+      </header>
+
+      <div class="game">
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+      </div>
+
+      <footer>
+        <div class="footer-content">
+          <div class="points">
+            <div class="icon-points">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="text-points">
+              <p class="points-title">
+                Jogador
+              </p>
+              <p class="value-player">
+                0
+              </p>
+              <p class="percentage percentage-value-player">
+                0.00%
+              </p>
+            </div>
+          </div>
+
+          <div class="points">
+            <div class="icon-points">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <div class="text-points">
+              <p class="points-title">
+                Empatou
+              </p>
+              <p class="value-tied">
+                0
+              </p>
+              <p class="percentage percentage-value-tied">
+                0.00%
+              </p>
+            </div>
+          </div>
+
+          <div class="points">
+            <div class="icon-points">
+              <i class="fas fa-laptop"></i>
+            </div>
+            <div class="text-points">
+              <p class="points-title">
+                Computador
+              </p>
+              <p class="value-computer">
+                0
+              </p>
+              <p class="percentage percentage-value-computer">
+                0.00%
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <div class="modal">
+        <div class="modal-content">
+          <h2>Escolha o seu simbolo</h2>
+          <div class="choice">
+            <i class='fas fa-times'
+              onclick='decideSymbol(`<i class="fas fa-times" aria-hidden="true"></i>`,`<i class="far fa-circle" aria-hidden="true"></i>`)'
+              aria-hidden='true'></i>
+            <i class='far fa-circle'
+              onclick='decideSymbol(`<i class="far fa-circle" aria-hidden="true"></i>`, `<i class="fas fa-times" aria-hidden="true"></i>`)'
+              aria-hidden='true'></i>
+          </div>
+        </div>
+      </div>
+
+      <script src="app.js"></script>
+  </body>
+
+</html>
