@@ -150,29 +150,33 @@
         if (gameState[x][y] !== "") {
             return;
         }
-
-        websocket.send(JSON.stringify({ x, y }))
-        handleCellPlayed(x, y);
       }
 
-      window.addEventListener("DOMContentLoaded", () => {
-        const messages = document.createElement("ul");
-        document.body.appendChild(messages);
+        window.addEventListener("DOMContentLoaded", () => {
+          const messages = document.createElement("ul");
+          document.body.appendChild(messages);
 
-        const websocket = new WebSocket("ws://localhost:8765/");
+          const websocket = new WebSocket("ws://localhost:8765/");
 
-        document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
+          document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
 
-        websocket.addEventListener("message", ({ data }) => {
-          const event = JSON.parse(data);
-          switch (event.type) {
-            case 'MOVEMENT':
-              console.log(data)
-              const {x , y} = JSON.parse(data)
-              handleCellPlayed(parseInt(x), parseInt(y))
-          }
-        })
-      });
-    </script>
-  </body>
+          websocket.addEventListener("message", ({ data }) => {
+            const event = JSON.parse(data);
+            switch (event.type) {
+              case 'MOVEMENT':
+                handleCellPlayed(parseInt(event.x), parseInt(event.y))
+                break
+              case 'WINNER':
+                const { player } = event
+                if (player !== '') {
+                  alert(`Player ${player} win!`)
+                } else {
+                  alert(`Is a tie :(`)
+                }
+                break
+            }
+          })
+        });
+      </script>
+    </body>
 </html>
