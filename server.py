@@ -6,28 +6,27 @@ import json
 from game import Game
 from minimax import Minimax
 
-player1, player2 = 'X', 'O'
 initial_state = [["", "", ""], ["", "", ""], ["", "", ""]]
 
 class Server:
     def __init__(self) -> None:
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
-        self.player = player1
-        self.game = Game(player1, player2)
+        self.player = Game.player1
+        self.game = Game()
 
 
     def is_finished(self):
-        if self.game.is_win(self.state, player1):
-            return player1
-        if self.game.is_win(self.state, player2):
-            return player2
+        if self.game.winner(self.state, Game.player1):
+            return Game.player1
+        if self.game.winner(self.state, Game.player2):
+            return Game.player2
         if self.game.is_tie(self.state):
             return ''
 
         return None
 
     def reset_game(self):
-        self.player = player1
+        self.player = Game.player1
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
     
     def is_first_move(self):
@@ -37,7 +36,34 @@ class Server:
                     return False
         
         return True
-
+    
+    async def player1_play(self, websocket, menu, algorithm):
+        x, y = 0, 0
+        if menu["option"] == 1:
+            message = await websocket.recv()
+            coord = json.loads(message)
+            x, y = coord["x"], coord["y"]
+        else:
+            if self.is_first_move():
+                x, y = self.game.random_play()
+            else:
+                x, y = algorithm.max_movement(self.state)
+            
+            await websocket.send(event.movement_event(Game.player1,x,y))
+        
+        return x, y
+    
+    async def player2_play(self, websocket, menu, algorithm):
+        x, y = 0, 0
+        if menu["option"] == 2:
+            message = await websocket.recv()
+            coord = json.loads(message)
+            x, y = coord["x"], coord["y"]
+        else:
+            x, y = algorithm.min_movement(self.state)
+            await websocket.send(event.movement_event(Game.player2,x,y))
+        
+        return x, y
 
 
     async def handler(self, websocket):
@@ -57,36 +83,14 @@ class Server:
                     self.reset_game()
                     break
 
-                if self.player == player1:
-                    x, y = 0, 0
-                    if menu["option"] == 1:
-                        message = await websocket.recv()
-                        coord = json.loads(message)
-                        x, y = coord["x"], coord["y"]
-                    else:
-                        if self.is_first_move():
-                            x, y = self.game.random_play()
-                        else:
-                            coord = algorithm.MAX(self.state)
-                            x, y = coord.x, coord.y
-                        
-                        await websocket.send(event.movement_event(player1,x,y))
-
-                    self.state[x][y] = player1
-                    self.player = player2
+                if self.player == Game.player1:
+                    x, y = await self.player1_play(websocket, menu, algorithm)
+                    self.state[x][y] = Game.player1
+                    self.player = Game.player2
                 else:
-                    x, y = 0, 0
-                    if menu["option"] == 2:
-                        message = await websocket.recv()
-                        coord = json.loads(message)
-                        x, y = coord["x"], coord["y"]
-                    else:
-                        coord = algorithm.MIN(self.state)
-                        x, y = coord.x, coord.y
-                        await websocket.send(event.movement_event(player2,x,y))
-
-                    self.state[x][y] = player2
-                    self.player = player1
+                    x, y = await self.player2_play(websocket, menu, algorithm)
+                    self.state[x][y] = Game.player2
+                    self.player = Game.player1
 
             await websocket.recv()
 

@@ -4,9 +4,9 @@ from action import Action
 from result import Result
 
 class Game:
-    def __init__(self, player1, player2) -> None:
-        self.player1 = player1
-        self.player2 = player2
+    player1 = 'X'
+    player2 = 'O'
+    tie = "tie"
 
     def is_tie(self, state):
         for i in range(len(state)):
@@ -16,7 +16,7 @@ class Game:
 
         return True
 
-    def is_win(self, state, player):
+    def winner(self, state, player):
         for i in range(len(state)):
             if state[i][0] == player and state[i][1] == player and state[i][2] == player:
                 return True
@@ -43,30 +43,6 @@ class Game:
         i = random.randint(0, len(positions) - 1)
         x, y = positions[i]
         return x, y
-
-
-    def actions(self, state, player):
-        a = []
-
-        for x in range(len(state)):
-            for y in range(len(state[x])):
-                if state[x][y] == "":
-                    state[x][y] = player
-                    new_state = copy.deepcopy(state)
-                    new_action = Action(new_state, x, y)
-                    a.append(new_action)
-                    state[x][y] = ""
-        
-        return a
-
-
-    def utility(self, state, player):
-        if self.is_win(state, player):
-            value = 1.0 if player == self.player1 else 0
-            return Result(value, -1, -1)
-
-        if self.is_tie(state):
-            return Result(0.5, -1, -1)
 
     def human_play(self):
         print("Digite as coordenadas:")
