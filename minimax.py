@@ -5,31 +5,23 @@ class Minimax:
         self.game = game
 
     def MAX(self, state):
-        if self.game.is_end(state, self.game.player1):
-            return self.game.utility(state, self.game.player1)
+        if self.game.is_end(state, self.game.player):
+            return self.game.utility(state)
 
         v = float("-inf")
-        x, y = -1, -1
-        for action in self.game.actions(state, self.game.player1):
-            res = self.MIN(action.state)
-            if res.value > v:
-                v = res.value
-                x = action.x
-                y = action.y
+        for action in self.game.seq_actions(state, self.game.player):
+            min_val = self.MIN(action)
+            v = max(min_val, v)
 
-        return Result(v, x, y)
+        return v
 
-    def MIN(self, state):
-        if self.game.is_end(state, self.game.player2):
-            return self.game.utility(state, self.game.player2)
+    def MIN(self, state, curr_player):
+        if self.game.is_end(state, curr_player, self.game.oponent):
+            return self.game.utility(state)
 
         v = float("inf")
-        x, y = -1, -1
-        for action in self.game.actions(state, self.game.player2):
-            res = self.MAX(action.state)
-            if res.value < v:
-                v = res.value
-                x = action.x
-                y = action.y
+        for action in self.game.seq_actions(state, self.game.oponent):
+            max_val = self.MAX(action)
+            v = min(max_val, v)
 
-        return Result(v, x, y)
+        return v

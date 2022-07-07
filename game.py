@@ -4,9 +4,9 @@ from action import Action
 from result import Result
 
 class Game:
-    def __init__(self, player1, player2) -> None:
-        self.player1 = player1
-        self.player2 = player2
+    def __init__(self, player, oponent) -> None:
+        self.player = player
+        self.oponent = oponent
 
     def is_tie(self, state):
         for i in range(len(state)):
@@ -16,22 +16,22 @@ class Game:
 
         return True
 
-    def is_win(self, state, player):
+    def is_win(self, state, curr_player):
         for i in range(len(state)):
-            if state[i][0] == player and state[i][1] == player and state[i][2] == player:
+            if state[i][0] == curr_player and state[i][1] == curr_player and state[i][2] == curr_player:
                 return True
 
-            if state[0][i] == player and state[1][i] == player and state[2][i] == player:
+            if state[0][i] == curr_player and state[1][i] == curr_player and state[2][i] == curr_player:
                 return True
 
-        if state[0][0] == player and state[1][1] == player and state[2][2] == player:
+        if state[0][0] == curr_player and state[1][1] == curr_player and state[2][2] == curr_player:
             return True
 
-        if state[0][2] == player and state[1][1] == player and state[2][0] == player:
+        if state[0][2] == curr_player and state[1][1] == curr_player and state[2][0] == curr_player:
             return True
 
-    def is_end(self, state, player):
-        return self.is_win(state, player) or self.is_tie(state)
+    def is_end(self, state, curr_player):
+        return self.is_win(state, curr_player) or self.is_tie(state)
 
     def actions(self, state, player):
         a = []
@@ -55,13 +55,28 @@ class Game:
 
         return a
 
-    def utility(self, state, player):
-        if self.is_win(state, player):
-            value = 1.0 if player == self.player1 else 0
-            return Result(value, -1, -1)
+    def seq_actions(self, state, curr_player):
+        a = []
+
+        for x in range(len(state)):
+            for y in range(len(state[x])):
+                if state[x][y] == '':
+                    state[x][y] = curr_player
+                    new_state = copy.deepcopy(state)
+                    a.append(new_state)
+                    state[x][y] = ''
+
+        return a
+
+    def utility(self, state):
+        if self.is_win(state, self.player):
+            return 1
+
+        if self.is_win(state, self.oponent):
+            return -1
 
         if self.is_tie(state):
-            return Result(0.5, -1, -1)
+            return 0
 
     def human_play(self):
         print("Digite as coordenadas:")

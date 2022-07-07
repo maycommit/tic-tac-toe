@@ -3,6 +3,7 @@ import websockets
 from alphabeta import Alphabeta
 import event
 import json
+import copy
 from game import Game
 from minimax import Minimax
 
@@ -31,6 +32,40 @@ class Server:
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
 
 
+    def find_next_max_move(self, algorithm, curr_player):
+        v = float("-inf")
+        cx, cy = 0, 0
+
+        for x in range(len(self.state)):
+            for y in range(len(self.state[x])):
+                if self.state[x][y] == "":
+                    self.state[x][y] = curr_player
+                    minimax_val = algorithm.MAX(copy.deepcopy(self.state))
+                    self.state[x][y] = ""
+
+                    if minimax_val > v:
+                        cx, cy = x, y
+                        v = minimax_val
+
+        return cx, cy
+
+    def find_next_min_move(self, algorithm, curr_player):
+        v = float("inf")
+        cx, cy = 0, 0
+
+        for x in range(len(self.state)):
+            for y in range(len(self.state[x])):
+                if self.state[x][y] == "":
+                    self.state[x][y] = curr_player
+                    minimax_val = algorithm.MIN(copy.deepcopy(self.state))
+                    self.state[x][y] = ""
+
+                    if minimax_val < v:
+                        cx, cy = x, y
+                        v = minimax_val
+        return cx, cy
+
+
     async def handler(self, websocket):
         while True:
             await websocket.send(event.start_event())
@@ -55,12 +90,12 @@ class Server:
                         coord = json.loads(message)
                         x, y = coord["x"], coord["y"]
                     else:
-                        coord = algorithm.MAX(self.state)
-                        x, y = coord.x, coord.y
+                        x, y = self.find_next_max_move(algorithm, player1)
                         await websocket.send(event.movement_event(player1,x,y))
 
                     self.state[x][y] = player1
                     self.player = player2
+
                 else:
                     x, y = 0, 0
                     if menu["option"] == 2:
@@ -68,8 +103,7 @@ class Server:
                         coord = json.loads(message)
                         x, y = coord["x"], coord["y"]
                     else:
-                        coord = algorithm.MIN(self.state)
-                        x, y = coord.x, coord.y
+                        x, y = self.find_next_min_move(algorithm, player2)
                         await websocket.send(event.movement_event(player2,x,y))
 
                     self.state[x][y] = player2
