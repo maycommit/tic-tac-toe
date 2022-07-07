@@ -4,6 +4,7 @@ from alphabeta import Alphabeta
 import event
 import json
 from game import Game
+from metric import Metric
 from minimax import Minimax
 
 initial_state = [["", "", ""], ["", "", ""], ["", "", ""]]
@@ -13,6 +14,7 @@ class Server:
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
         self.player = Game.player1
         self.game = Game()
+        self.metric = Metric()
 
 
     def is_finished(self):
@@ -47,7 +49,9 @@ class Server:
             if self.is_first_move():
                 x, y = self.game.random_play()
             else:
+                self.metric.start_duration()
                 x, y = algorithm.max_movement(self.state)
+                self.metric.end_duration()
             
             await websocket.send(event.movement_event(Game.player1,x,y))
         
@@ -60,7 +64,9 @@ class Server:
             coord = json.loads(message)
             x, y = coord["x"], coord["y"]
         else:
+            self.metric.start_duration()
             x, y = algorithm.min_movement(self.state)
+            self.metric.end_duration()
             await websocket.send(event.movement_event(Game.player2,x,y))
         
         return x, y
@@ -72,17 +78,20 @@ class Server:
             message = await websocket.recv()
             menu = json.loads(message)
 
-            algorithm = Minimax(self.game)
+            algorithm = Minimax(self.game, self.metric)
             if menu["algorithm"] == 1:
-                algorithm = Alphabeta(self.game)
+                algorithm = Alphabeta(self.game, self.metric)
 
+            self.metric.init_tree(menu["algorithm"])
             while True:
                 winner = self.is_finished()
+                
                 if winner != None:
                     await websocket.send(event.winner_event(winner))
                     self.reset_game()
                     break
 
+                self.metric.add_movement(self.player, self.state)
                 if self.player == Game.player1:
                     x, y = await self.player1_play(websocket, menu, algorithm)
                     self.state[x][y] = Game.player1
@@ -92,6 +101,7 @@ class Server:
                     self.state[x][y] = Game.player2
                     self.player = Game.player1
 
+            self.metric.save_tree(menu["algorithm"])
             await websocket.recv()
 
     async def main(self):

@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+<div style="height: 300px; width: 100%; display: flex;">
+<div id="columnChartContainer" style="height: 300px; width: 50%;"></div>
+<div id="pieChartContainer" style="height: 300px; width: 50%;"></div>
+</div>
+<input id="nodeKey"><button id="zoomToNode">Zoom to node</button>
+<button id="zoomToFit">Zoom to Fit</button>
+<div id="control"></div>
+<div id="myDiagramDiv" style="background-color: white; border: solid 1px black; width: 100%; height: 550px"></div>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script src="https://unpkg.com/gojs@2.2.10/release/go.js"></script>
+<script>
+function init() {
+  $.getJSON("alphabeta/nodes.json")
+      .then((results) => {
+        console.log(results)
+        const goJS = go.GraphObject.make;  // for conciseness in defining templates
+
+        myDiagram =
+          goJS(go.Diagram, "myDiagramDiv",  // must be the ID or reference to div
+            {
+              "toolManager.hoverDelay": 100,  // 100 milliseconds instead of the default 850
+              allowCopy: false,
+              layout:  // create a TreeLayout for the family tree
+                goJS(go.TreeLayout,
+                  { angle: 90, nodeSpacing: 10, layerSpacing: 40, layerStyle: go.TreeLayout.LayerUniform })
+            });
+
+
+        myDiagram.nodeTemplate =
+          goJS(go.Node, "Auto",
+            goJS(go.Panel, "Vertical",
+              { margin: 0 },
+              goJS(go.TextBlock, new go.Binding("text", "name"),
+                { margin: 0 })
+              )
+          );
+
+        let algId = 1
+        var nodeDataArray = results.map((result) => ({
+            key: result.id,
+            parent: result.parent,
+            name: result.state,
+        }))
+        myDiagram.model = go.Model.fromJson({ "class": "TreeModel", nodeDataArray })
+        
+
+        document.getElementById('zoomToFit').addEventListener('click', () => myDiagram.commandHandler.zoomToFit());
+        document.getElementById('zoomToNode').addEventListener('click', () => {
+          myDiagram.scale = 1;
+          value = $('#nodeKey').val()
+          console.log(value)
+          myDiagram.commandHandler.scrollToPart(myDiagram.findNodeForKey(value));
+        });
+      })
+}
+window.onload = function () {
+  $.getJSON( "results.json", function(results) {
+    var columnOptions = {
+      title: {
+        text: "Execution times"
+      },
+      data: [
+        {
+          type: "column",
+          dataPoints: [
+            { label: "minimax", y: results['minimax'].avgTime },
+            { label: "alphabeta", y: results['alphabeta'].avgTime },
+          ]
+        }
+      ]
+    };
+
+    var pieOptions = {
+      title: {
+        text: "Nodes"
+      },
+      data: [{
+        type: "pie",
+        startAngle: 240,
+        yValueFormatString: "##0",
+        indexLabel: "{label} {y}",
+        dataPoints: [
+          { label: "minimax", y: results['minimax']?.nodes || 0 },
+          { label: "alphabeta", y: results['alphabeta']?.nodes || 0 },
+        ]
+      }]
+    }
+
+    $("#columnChartContainer").CanvasJSChart(columnOptions);
+    $("#pieChartContainer").CanvasJSChart(pieOptions);
+
+  });
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

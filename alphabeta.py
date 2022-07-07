@@ -1,9 +1,11 @@
 import copy
 from game import Game
+from metric import Metric
 
 class Alphabeta:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, metric: Metric) -> None:
         self.game = game
+        self.metric = metric
     
     def max_movement(self, state):
         mx, my = -1, -1
@@ -76,6 +78,7 @@ class Alphabeta:
         return Game.player2 if player == Game.player1 else Game.player1
 
     def __MAX(self, state, player=Game.player1, alpha = float("-inf"), beta = float("inf")):
+        parent = self.metric.add_parent("MAX", state)
         terminal_val = self.__terminal(state)
         if terminal_val:
             utility = self.__utility(terminal_val)
@@ -83,6 +86,7 @@ class Alphabeta:
 
         v = float("-inf")
         for action in self.__actions(state, player):
+            self.metric.add_action(parent, action)
             v = max(v, self.__MIN(action, self.__opposite_player(player), alpha, beta))
             if v >= beta: return v
             alpha = max(alpha, v)
@@ -90,6 +94,7 @@ class Alphabeta:
         return v
 
     def __MIN(self, state, player=Game.player2, alpha = float("-inf"), beta = float("inf")):
+        parent = self.metric.add_parent("MIN", state)
         terminal_val = self.__terminal(state)
         if terminal_val:
             utility = self.__utility(terminal_val)
@@ -97,6 +102,7 @@ class Alphabeta:
 
         v = float("inf")
         for action in self.__actions(state, player):
+            self.metric.add_action(parent, action)
             v = min(v, self.__MAX(action, self.__opposite_player(player), alpha, beta))
             if v <= alpha: return v
             beta = min(beta, v)
