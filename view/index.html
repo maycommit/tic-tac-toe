@@ -75,8 +75,9 @@
       <script>
         const player1 = 'X'
         const player2 = 'O'
+        const initialState = [['', '', ''], ['', '', ''], ['', '', '']]
 
-        let gameState = [['', '', ''], ['', '', ''], ['', '', '']]
+        let gameState = initialState
         let currentPlayer = player1
 
         const handleCellPlayed = (x, y) => {
@@ -99,6 +100,7 @@
             websocket.send(JSON.stringify({ x, y }))
             handleCellPlayed(x, y);
         }
+
         window.addEventListener("DOMContentLoaded", () => {
           const messages = document.createElement("ul");
           document.body.appendChild(messages);
@@ -111,9 +113,16 @@
             const event = JSON.parse(data);
             switch (event.type) {
               case 'MOVEMENT':
-                console.log(data)
-                const {x , y} = JSON.parse(data)
-                handleCellPlayed(parseInt(x), parseInt(y))
+                handleCellPlayed(parseInt(event.x), parseInt(event.y))
+                break
+              case 'WINNER':
+                const { player } = event
+                if (player !== '') {
+                  alert(`Player ${player} win!`)
+                } else {
+                  alert(`Is a tie :(`)
+                }
+                break
             }
           })
         });
