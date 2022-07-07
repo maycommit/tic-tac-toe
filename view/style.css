@@ -32,7 +32,7 @@ section {
     display: flex;
     flex-wrap: wrap;
     width: 512px;
-    margin: 2% auto;
+    margin: 6% auto;
 }
 
 .cell {
@@ -65,11 +65,12 @@ section {
     font-size: 5em;
 }
 
-
-.game--status {
-    font-size: 50px;
-    color: #d7a62f;
-    margin: 20px auto;
+.game-status {
+    margin-top: 20px;
+    font-size: 30px;
+    color: #04D361;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .game--restart {
@@ -81,6 +82,99 @@ section {
     font-weight: 700;
     font-size: 1em;
     text-transform: uppercase;
+}
+
+
+.modal {
+    background-color: #303030D8;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.modal-content {
+    width: 45%;
+    height: 45%;
+    background-color: #121212;
+    box-shadow: 0px 0px 30px 0px #00000073;
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 15%;
+    padding: 1% 2%;
+    color: #fff;
+}
+
+.modal h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 2em;
+    padding: 15px 0;
+    color: #fff;
+}
+
+.algorithm {
+    width: 100%;
+    padding: 4px;
+    border-radius: 4px;
+    border: none;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.algorithm-option {
+   border: none; 
+    height: 200px;
+}
+
+.radio-game {
+    margin-top: 15px;
+    border-top: 4px solid #8257E5; 
+}
+
+.radio-game-input{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+input[type="radio"] {
+   width: 18px;
+   height: 18px;
+   margin-right: 10px;
+}
+
+.modal-start{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-start-button{
+    margin-top: 15%;
+    width: 300px;
+    padding: 8px;    
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #04D361;
+    box-shadow: 0px 0px 30px 0px #8257E5;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.modal i {
+    padding: 2% 5%;
+    margin: 7% 2%;
+    font-size: 7em;
+}
+
+.hidden {
+    display: none;
 }
 
 footer {

@@ -14,6 +14,9 @@
   <body>
     <section>
       <h1 class="game--title">Tic Tac Toe</h1>
+
+      <h2 class="game-status hidden"></h2>
+
       <div class="game--container">
           <div data-cell-index="0 0" class="cell"></div>
           <div data-cell-index="0 1" class="cell"></div>
@@ -25,9 +28,41 @@
           <div data-cell-index="2 1" class="cell"></div>
           <div data-cell-index="2 2" class="cell"></div>
       </div>
-      <h2 class="game--status"></h2>
-      <button class="game--restart">Restart Game</button>
+    
+      <button id="restart" class="game--restart hidden">Restart Game</button>
     </section>
+
+    <div class="modal hidden">
+      <div class="modal-content">
+        <h2>Escolha como jogar</h2>
+     
+        <select class="algorithm" id="menu-algorithm" selected="0">
+          <option class="algorithm-option" value="0">Minimax</option>
+          <option class="algorithm-option" value="1">Alphabeta</option>
+        </select>
+        
+        <div class="radio-game">
+          <div class="radio-game-input">
+            <input type="radio" id="menu-option-1" name="menu-option" value="1" checked>
+            <label for="menu-option-1">Player vs Computer</label>
+          </div>
+
+          <div class="radio-game-input">
+            <input type="radio" id="menu-option-2" name="menu-option" value="2">
+            <label for="menu-option-2">Computer vs Player</label>
+          </div>
+
+          <div class="radio-game-input">
+            <input type="radio" id="menu-option-3" name="menu-option" value="3">
+            <label for="menu-option-3">Computer vs Computer</label>
+          </div>
+        </div>
+
+        <div class="modal-start">
+          <button class="modal-start-button" id="start">Start</button>
+        </div>
+      </div>
+    </div>
 
     <footer>
       <div class="footer-content">
@@ -85,6 +120,8 @@
     </footer>
 
     <script>
+      const playerStatus = document.querySelector('.game-status')
+
       const valuePlayer1 = document.querySelector('.value-player')
       const valuePlayer2 = document.querySelector('.value-computer')
       const valueTied = document.querySelector('.value-tied')
@@ -102,6 +139,16 @@
 
       let gameState = [['', '', ''], ['', '', ''], ['', '', '']]
       let currentPlayer = player1
+
+      const toggleModal = () => {
+        const modalElement = document.querySelector('.modal')
+        modalElement.classList.toggle('hidden')
+      }
+
+      const toggleRestartButton = () => {
+        const buttonElement = document.querySelector('#restart')
+        buttonElement.classList.toggle('hidden')
+      }
 
       const applyPorcentage = () => {
         let totalGame = player1Points + player2Points + tiedPoints
@@ -124,11 +171,6 @@
         }
         applyPorcentage()
       }
-
-      // applyPoints(player1)
-      // applyPoints(player1)
-      // applyPoints(player2)
-
 
       const handleIconByCurrentPlayer = (currentPlayer) => {
         return currentPlayer === 'X' ? '<i class="fas fa-times" aria-hidden="true"></i>' : '<i class="far fa-circle" aria-hidden="true"></i>'  
@@ -155,10 +197,7 @@
         handleCellPlayed(x, y);
       }
 
-        window.addEventListener("DOMContentLoaded", () => {
-          const messages = document.createElement("ul");
-          document.body.appendChild(messages);
-        const handleStartClick = (websocket) => (clickedStartEvent) => {
+      const handleStartClick = (websocket) => (clickedStartEvent) => {
           const option = document.querySelector('input[name="menu-option"]:checked').value;
           const algorithm = document.querySelector('#menu-algorithm').value;
           websocket.send(JSON.stringify({ algorithm: parseInt(algorithm), option: parseInt(option) }))
@@ -168,7 +207,6 @@
         const resetGame = () => {
           document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = '')
         }
-
 
         const handleRestartClick = (websocket) => (clickedRestartEvent) => {
           resetGame()
@@ -196,12 +234,15 @@
               case 'WINNER':
                 setTimeout(() => {
                   const { player } = event
-                  toggleRestartButton()
+                  
                   if (player !== '') {
-                    alert(`Player ${player} win!`)
+                    playerStatus.innerHTML = `Player ${player} win!`
+                    playerStatus.classList.remove('hidden')
                   } else {
-                    alert(`Is a tie :(`)
+                    playerStatus.innerHTML = `Is a tie :(`
+                    playerStatus.classList.remove('hidden')
                   }
+                  toggleRestartButton()
                 }, 1000)
                 break
             }
