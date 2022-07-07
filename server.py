@@ -27,6 +27,7 @@ class Server:
         return None
 
     def reset_game(self):
+        self.player = player1
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
 
 

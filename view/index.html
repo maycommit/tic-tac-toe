@@ -155,15 +155,15 @@
         const player1 = 'X'
         const player2 = 'O'
         const initialState = [['', '', ''], ['', '', ''], ['', '', '']]
+        const copy = state => state.map(inner => inner.slice())
 
-        let gameState = initialState
+        let gameState = copy(initialState)
         let currentPlayer = player1
 
         const toggleModal = () => {
           const modalElement = document.querySelector('.modal')
           modalElement.classList.toggle('hidden')
         }
-
 
         const toggleRestartButton = () => {
           const buttonElement = document.querySelector('#restart')
@@ -173,6 +173,7 @@
         const handleCellPlayed = (x, y) => {
             gameState[x][y] = currentPlayer;
             const clickedCell = document.querySelector(`[data-cell-index="${x} ${y}"]`)
+
             clickedCell.innerHTML = currentPlayer;
             currentPlayer = currentPlayer === player1 ? player2 : player1
         }
@@ -182,6 +183,7 @@
             const [x, y] = clickedCell.getAttribute('data-cell-index')
               .split(' ')
               .map(index => parseInt(index));
+
 
             if (gameState[x][y] !== "") {
                 return;
@@ -198,14 +200,15 @@
           toggleModal()
         }
 
-        const resetGame = () => {
+        const resetGame = (websocket) => {
           document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = '')
         }
 
 
         const handleRestartClick = (websocket) => (clickedRestartEvent) => {
-          resetGame()
-          gameState = initialState
+          resetGame(websocket)
+          gameState = copy(initialState)
+          currentPlayer = player1
           websocket.send({ type: 'RESTART' })
           toggleRestartButton()
         }
