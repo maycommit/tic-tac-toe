@@ -1,18 +1,22 @@
 from game import Game
 from minimax import Minimax
 from alphabeta import Alphabeta
+import event
+
+initial_board = [["", "", ""], ["", "", ""], ["", "", ""]]
 
 class TicTacToe:
-    def __init__(self) -> None:
+    def __init__(self, websocket) -> None:
         self.player1 = 'X'
         self.player2 = 'O'
-        self.board = None
+        self.board = initial_board
         self.current_player = None
         self.game = Game(self.player1, self.player2)
         self.algorithm = Alphabeta(self.game)
+        self.websocket = websocket
 
     def init_game(self):
-        self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
+        self.board = initial_board
         self.current_player = self.player1
 
     def is_finished(self):
@@ -54,10 +58,12 @@ class TicTacToe:
                     res = self.game.human_play() if menu == 1 else self.algorithm.MAX(self.board)
                     self.board[res.x][res.y] = self.player1
                     self.current_player = self.player2
+
                 else:
                     res = self.game.human_play() if menu == 2 else self.algorithm.MIN(self.board)
                     self.board[res.x][res.y] = self.player2
                     self.current_player = self.player1
+
 
                 self.game.print(self.board)
 
