@@ -158,26 +158,51 @@
         window.addEventListener("DOMContentLoaded", () => {
           const messages = document.createElement("ul");
           document.body.appendChild(messages);
+        const handleStartClick = (websocket) => (clickedStartEvent) => {
+          const option = document.querySelector('input[name="menu-option"]:checked').value;
+          const algorithm = document.querySelector('#menu-algorithm').value;
+          websocket.send(JSON.stringify({ algorithm: parseInt(algorithm), option: parseInt(option) }))
+          toggleModal()
+        }
 
+        const resetGame = () => {
+          document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = '')
+        }
+
+
+        const handleRestartClick = (websocket) => (clickedRestartEvent) => {
+          resetGame()
+          gameState = initialState
+          websocket.send({ type: 'RESTART' })
+          toggleRestartButton()
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
           const websocket = new WebSocket("ws://localhost:8765/");
 
           document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
+          document.querySelector('#start').addEventListener('click', handleStartClick(websocket));
+          document.querySelector('#restart').addEventListener('click', handleRestartClick(websocket));
 
           websocket.addEventListener("message", ({ data }) => {
             const event = JSON.parse(data);
             switch (event.type) {
+              case 'MENU':
+                toggleModal()
+                break
               case 'MOVEMENT':
                 handleCellPlayed(parseInt(event.x), parseInt(event.y))
                 break
               case 'WINNER':
-                const { player } = event
-                if (player !== '') {
-                  applyPoints(player)
-                  alert(`Player ${player} win!`)
-                } else {
-                  applyPoints('tie')
-                  alert(`Is a tie :(`)
-                }
+                setTimeout(() => {
+                  const { player } = event
+                  toggleRestartButton()
+                  if (player !== '') {
+                    alert(`Player ${player} win!`)
+                  } else {
+                    alert(`Is a tie :(`)
+                  }
+                }, 1000)
                 break
             }
           })
