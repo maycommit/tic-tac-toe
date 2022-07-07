@@ -29,6 +29,15 @@ class Server:
     def reset_game(self):
         self.player = player1
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
+    
+    def is_first_move(self):
+        for x in range(len(self.state)):
+            for y in range(len(self.state[x])):
+                if self.state[x][y] != "":
+                    return False
+        
+        return True
+
 
 
     async def handler(self, websocket):
@@ -55,8 +64,12 @@ class Server:
                         coord = json.loads(message)
                         x, y = coord["x"], coord["y"]
                     else:
-                        coord = algorithm.MAX(self.state)
-                        x, y = coord.x, coord.y
+                        if self.is_first_move():
+                            x, y = self.game.random_play()
+                        else:
+                            coord = algorithm.MAX(self.state)
+                            x, y = coord.x, coord.y
+                        
                         await websocket.send(event.movement_event(player1,x,y))
 
                     self.state[x][y] = player1
