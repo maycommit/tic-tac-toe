@@ -1,122 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-      <title>Tic tac toe</title>
-      <style>
-        body {
-            font-family: "Arial", sans-serif;
-        }
+<html lang="pt-BR"> 
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/b775c270a3.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  </head>
+    
+  <body>
+    <section>
+      <h1 class="game--title">Tic Tac Toe</h1>
+      <div class="game--container">
+          <div data-cell-index="0 0" class="cell"></div>
+          <div data-cell-index="0 1" class="cell"></div>
+          <div data-cell-index="0 2" class="cell"></div>
+          <div data-cell-index="1 0" class="cell"></div>
+          <div data-cell-index="1 1" class="cell"></div>
+          <div data-cell-index="1 2" class="cell"></div>
+          <div data-cell-index="2 0" class="cell"></div>
+          <div data-cell-index="2 1" class="cell"></div>
+          <div data-cell-index="2 2" class="cell"></div>
+      </div>
+      <h2 class="game--status"></h2>
+      <button class="game--restart">Restart Game</button>
+    </section>
 
-        section {
-            text-align: center;
-        }
-
-        .game--title {
-            font-size: 100px;
-            color: #d7a62f;
-            margin: 10px auto;
-        }
-
-        .game--container {
-            display: grid;
-            grid-template-columns: repeat(3, auto);
-            width: 306px;
-            margin: 10px auto;
-            background-color: #11213a;
-            color: #04c0b2;
-        }
-
-        .cell {
-            font-family: "Permanent Marker", cursive;
-            width: 100px;
-            height: 100px;
-            box-shadow: 2px 2px 2px 2px #ecd7ba;
-            border: 2px solid #ecd7ba;
-            cursor: pointer;
-            line-height: 100px;
-            font-size: 60px;
-        }
-
-        .game--status {
-            font-size: 50px;
-            color: #d7a62f;
-            margin: 20px auto;
-        }
-
-        .game--restart {
-            background-color: #f7e4ac;
-            width: 200px;
-            height: 50px;
-            font-size: 25px;
-            color: #5586e2;
-            box-shadow: 2px 2px 2px 2px #d86c23;
-            border: 2px solid #d86c23;
-        }
-      </style>
-    </head>
-    <body>
-      <section>
-        <h1 class="game--title">Tic Tac Toe</h1>
-        <div class="game--container">
-            <div data-cell-index="0 0" class="cell"></div>
-            <div data-cell-index="0 1" class="cell"></div>
-            <div data-cell-index="0 2" class="cell"></div>
-            <div data-cell-index="1 0" class="cell"></div>
-            <div data-cell-index="1 1" class="cell"></div>
-            <div data-cell-index="1 2" class="cell"></div>
-            <div data-cell-index="2 0" class="cell"></div>
-            <div data-cell-index="2 1" class="cell"></div>
-            <div data-cell-index="2 2" class="cell"></div>
+    <footer>
+      <div class="footer-content">
+        <div class="points">
+          <div class="icon-points">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="text-points">
+            <p class="points-title">
+              Jogador
+            </p>
+            <p class="value-player">
+              0
+            </p>
+            <p class="percentage percentage-value-player">
+              0.00%
+            </p>
+          </div>
         </div>
-        <h2 class="game--status"></h2>
-        <button class="game--restart">Restart Game</button>
-      </section>
 
-      <script>
-        const player1 = 'X'
-        const player2 = 'O'
+        <div class="points">
+          <div class="icon-points">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <div class="text-points">
+            <p class="points-title">
+              Empatou
+            </p>
+            <p class="value-tied">
+              0
+            </p>
+            <p class="percentage percentage-value-tied">
+              0.00%
+            </p>
+          </div>
+        </div>
 
-        let gameState = [['', '', ''], ['', '', ''], ['', '', '']]
-        let currentPlayer = player1
+        <div class="points">
+          <div class="icon-points">
+            <i class="fas fa-laptop"></i>
+          </div>
+          <div class="text-points">
+            <p class="points-title">
+              Computador
+            </p>
+            <p class="value-computer">
+              0
+            </p>
+            <p class="percentage percentage-value-computer">
+              0.00%
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-        const handleCellPlayed = (x, y) => {
-            gameState[x][y] = currentPlayer;
-            const clickedCell = document.querySelector(`[data-cell-index="${x} ${y}"]`)
-            clickedCell.innerHTML = currentPlayer;
-            currentPlayer = currentPlayer === player1 ? player2 : player1
+    <script>
+      const valuePlayer1 = document.querySelector('.value-player')
+      const valuePlayer2 = document.querySelector('.value-computer')
+      const valueTied = document.querySelector('.value-tied')
+
+      const percentagePlayer1 = document.querySelector('.percentage-value-player')
+      const percentagePlayer2 = document.querySelector('.percentage-value-computer')
+      const percentageTied = document.querySelector('.percentage-value-tied')
+
+      const player1 = 'X'
+      const player2 = 'O'
+
+      let player1Points = 0
+      let player2Points = 0
+      let tiedPoints = 0
+
+      let gameState = [['', '', ''], ['', '', ''], ['', '', '']]
+      let currentPlayer = player1
+
+      const applyPorcentage = () => {
+        let totalGame = player1Points + player2Points + tiedPoints
+
+        percentagePlayer1.innerHTML = ((100 * player1Points) / totalGame).toFixed(2) + "%"
+        percentagePlayer2.innerHTML = ((100 * player2Points) / totalGame).toFixed(2) + "%"
+        percentageTied.innerHTML = ((100 * tiedPoints) / totalGame).toFixed(2) + "%"
+      }
+
+      const applyPoints = (symbol) => {
+        if (symbol === player1) {
+          player1Points += 1
+          valuePlayer1.innerHTML = player1Points
+        } else if (symbol === player2) {
+          player2Points += 1
+          valuePlayer2.innerHTML = player2Points
+        } else {
+          tiedPoints += 1
+          valueTied.innerHTML = tiedPoints
+        }
+        applyPorcentage()
+      }
+
+      // applyPoints(player1)
+      // applyPoints(player1)
+      // applyPoints(player2)
+
+
+      const handleIconByCurrentPlayer = (currentPlayer) => {
+        return currentPlayer === 'X' ? '<i class="fas fa-times" aria-hidden="true"></i>' : '<i class="far fa-circle" aria-hidden="true"></i>'  
+      }
+
+      const handleCellPlayed = (x, y) => {
+        gameState[x][y] = currentPlayer;
+        const clickedCell = document.querySelector(`[data-cell-index="${x} ${y}"]`)
+        clickedCell.innerHTML = handleIconByCurrentPlayer(currentPlayer);
+        currentPlayer = currentPlayer === player1 ? player2 : player1
+      }
+
+      const handleCellClick = (websocket) => (clickedCellEvent) => {
+        const clickedCell = clickedCellEvent.target;
+        const [x, y] = clickedCell.getAttribute('data-cell-index')
+          .split(' ')
+          .map(index => parseInt(index));
+
+        if (gameState[x][y] !== "") {
+            return;
         }
 
-        const handleCellClick = (websocket) => (clickedCellEvent) => {
-            const clickedCell = clickedCellEvent.target;
-            const [x, y] = clickedCell.getAttribute('data-cell-index')
-              .split(' ')
-              .map(index => parseInt(index));
+        websocket.send(JSON.stringify({ x, y }))
+        handleCellPlayed(x, y);
+      }
 
-            if (gameState[x][y] !== "") {
-                return;
-            }
+      window.addEventListener("DOMContentLoaded", () => {
+        const messages = document.createElement("ul");
+        document.body.appendChild(messages);
 
-            websocket.send(JSON.stringify({ x, y }))
-            handleCellPlayed(x, y);
-        }
-        window.addEventListener("DOMContentLoaded", () => {
-          const messages = document.createElement("ul");
-          document.body.appendChild(messages);
+        const websocket = new WebSocket("ws://localhost:8765/");
 
-          const websocket = new WebSocket("ws://localhost:8765/");
+        document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
 
-          document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
-
-          websocket.addEventListener("message", ({ data }) => {
-            const event = JSON.parse(data);
-            switch (event.type) {
-              case 'MOVEMENT':
-                console.log(data)
-                const {x , y} = JSON.parse(data)
-                handleCellPlayed(parseInt(x), parseInt(y))
-            }
-          })
-        });
-      </script>
-    </body>
+        websocket.addEventListener("message", ({ data }) => {
+          const event = JSON.parse(data);
+          switch (event.type) {
+            case 'MOVEMENT':
+              console.log(data)
+              const {x , y} = JSON.parse(data)
+              handleCellPlayed(parseInt(x), parseInt(y))
+          }
+        })
+      });
+    </script>
+  </body>
 </html>
