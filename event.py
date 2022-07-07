@@ -5,3 +5,6 @@ def movement_event(player, x, y):
 
 def winner_event(player):
     return json.dumps({"type": "WINNER", "player": player })
+
+def start_event():
+    return json.dumps({"type": "MENU" })

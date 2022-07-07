@@ -52,6 +52,54 @@
             box-shadow: 2px 2px 2px 2px #d86c23;
             border: 2px solid #d86c23;
         }
+
+        .modal {
+            background-color: #303030D8;
+            position: fixed;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .modal-content {
+            width: 40%;
+            height: 40%;
+            background-color: #121212;
+            box-shadow: 0px 0px 30px 0px #00000073;
+            border-radius: 10px;
+            margin: 0 auto;
+            margin-top: 15%;
+            padding: 1% 2%;
+            color: #fff;
+        }
+
+        .modal h2 {
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 2em;
+            padding: 15px 0;
+            color: #fff;
+        }
+
+        .modal .choice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+        }
+
+        .modal i {
+            padding: 2% 5%;
+            margin: 7% 2%;
+            font-size: 7em;
+        }
+
+        .hidden {
+            display: none;
+        }
       </style>
     </head>
     <body>
@@ -69,8 +117,39 @@
             <div data-cell-index="2 2" class="cell"></div>
         </div>
         <h2 class="game--status"></h2>
-        <button class="game--restart">Restart Game</button>
+        <button id="restart" class="game--restart hidden">Restart Game</button>
       </section>
+
+      <div class="modal hidden">
+        <div class="modal-content">
+          <h2>Escolha o seu simbolo</h2>
+          <div>
+            <div>
+              <select class="algorithm" id="menu-algorithm" selected="0">
+                <option value="0">Minimax</option>
+                <option value="1">Alphabeta</option>
+              </select>
+            </div>
+            <div>
+              <input type="radio" id="menu-option-1" name="menu-option" value="1" checked>
+              <label for="menu-option-1">1 vs Machine</label><br>
+              <input type="radio" id="menu-option-2" name="menu-option" value="2">
+              <label for="menu-option-2">Machine vs 1</label><br>
+              <input type="radio" id="menu-option-3" name="menu-option" value="3">
+              <label for="menu-option-3">Machine vs Machine</label>
+            </div>
+            <button id="start">Start</button>
+          </div>
+          <div class="choice">
+            <i class='fas fa-times'
+              onclick='decideSymbol(`<i class="fas fa-times" aria-hidden="true"></i>`,`<i class="far fa-circle" aria-hidden="true"></i>`)'
+              aria-hidden='true'></i>
+            <i class='far fa-circle'
+              onclick='decideSymbol(`<i class="far fa-circle" aria-hidden="true"></i>`, `<i class="fas fa-times" aria-hidden="true"></i>`)'
+              aria-hidden='true'></i>
+          </div>
+        </div>
+      </div>
 
       <script>
         const player1 = 'X'
@@ -79,6 +158,17 @@
 
         let gameState = initialState
         let currentPlayer = player1
+
+        const toggleModal = () => {
+          const modalElement = document.querySelector('.modal')
+          modalElement.classList.toggle('hidden')
+        }
+
+
+        const toggleRestartButton = () => {
+          const buttonElement = document.querySelector('#restart')
+          buttonElement.classList.toggle('hidden')
+        }
 
         const handleCellPlayed = (x, y) => {
             gameState[x][y] = currentPlayer;
@@ -101,27 +191,51 @@
             handleCellPlayed(x, y);
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
-          const messages = document.createElement("ul");
-          document.body.appendChild(messages);
+        const handleStartClick = (websocket) => (clickedStartEvent) => {
+          const option = document.querySelector('input[name="menu-option"]:checked').value;
+          const algorithm = document.querySelector('#menu-algorithm').value;
+          websocket.send(JSON.stringify({ algorithm: parseInt(algorithm), option: parseInt(option) }))
+          toggleModal()
+        }
 
+        const resetGame = () => {
+          document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = '')
+        }
+
+
+        const handleRestartClick = (websocket) => (clickedRestartEvent) => {
+          resetGame()
+          gameState = initialState
+          websocket.send({ type: 'RESTART' })
+          toggleRestartButton()
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
           const websocket = new WebSocket("ws://localhost:8765/");
 
           document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick(websocket)));
+          document.querySelector('#start').addEventListener('click', handleStartClick(websocket));
+          document.querySelector('#restart').addEventListener('click', handleRestartClick(websocket));
 
           websocket.addEventListener("message", ({ data }) => {
             const event = JSON.parse(data);
             switch (event.type) {
+              case 'MENU':
+                toggleModal()
+                break
               case 'MOVEMENT':
                 handleCellPlayed(parseInt(event.x), parseInt(event.y))
                 break
               case 'WINNER':
-                const { player } = event
-                if (player !== '') {
-                  alert(`Player ${player} win!`)
-                } else {
-                  alert(`Is a tie :(`)
-                }
+                setTimeout(() => {
+                  const { player } = event
+                  toggleRestartButton()
+                  if (player !== '') {
+                    alert(`Player ${player} win!`)
+                  } else {
+                    alert(`Is a tie :(`)
+                  }
+                }, 1000)
                 break
             }
           })

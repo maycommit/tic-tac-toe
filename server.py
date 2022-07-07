@@ -1,10 +1,10 @@
 import asyncio
 import websockets
+from alphabeta import Alphabeta
 import event
 import json
 from game import Game
 from minimax import Minimax
-
 
 player1, player2 = 'X', 'O'
 initial_state = [["", "", ""], ["", "", ""], ["", "", ""]]
@@ -14,7 +14,6 @@ class Server:
         self.state = [["", "", ""], ["", "", ""], ["", "", ""]]
         self.player = player1
         self.game = Game(player1, player2)
-        self.algorithm = Minimax(self.game)
 
 
     def is_finished(self):
@@ -33,21 +32,49 @@ class Server:
 
     async def handler(self, websocket):
         while True:
-            winner = self.is_finished()
-            if winner != None:
-                await websocket.send(event.winner_event(winner))
-                self.reset_game()
+            await websocket.send(event.start_event())
+            message = await websocket.recv()
+            menu = json.loads(message)
 
-            if self.player == player1:
-                message = await websocket.recv()
-                coord = json.loads(message)
-                self.state[coord["x"]][coord["y"]] = player1
-                self.player = player2
-            else:
-                coord = self.algorithm.MIN(self.state)
-                self.state[coord.x][coord.y] = player2
-                self.player = player1
-                await websocket.send(event.movement_event(player2, coord.x, coord.y))
+            algorithm = Minimax(self.game)
+            if menu["algorithm"] == 1:
+                algorithm = Alphabeta(self.game)
+
+            while True:
+                winner = self.is_finished()
+                if winner != None:
+                    await websocket.send(event.winner_event(winner))
+                    self.reset_game()
+                    break
+
+                if self.player == player1:
+                    x, y = 0, 0
+                    if menu["option"] == 1:
+                        message = await websocket.recv()
+                        coord = json.loads(message)
+                        x, y = coord["x"], coord["y"]
+                    else:
+                        coord = algorithm.MAX(self.state)
+                        x, y = coord.x, coord.y
+                        await websocket.send(event.movement_event(player1,x,y))
+
+                    self.state[x][y] = player1
+                    self.player = player2
+                else:
+                    x, y = 0, 0
+                    if menu["option"] == 2:
+                        message = await websocket.recv()
+                        coord = json.loads(message)
+                        x, y = coord["x"], coord["y"]
+                    else:
+                        coord = algorithm.MIN(self.state)
+                        x, y = coord.x, coord.y
+                        await websocket.send(event.movement_event(player2,x,y))
+
+                    self.state[x][y] = player2
+                    self.player = player1
+
+            await websocket.recv()
 
     async def main(self):
         async with websockets.serve(self.handler, "localhost", 8765):
