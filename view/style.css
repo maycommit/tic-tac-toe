@@ -132,7 +132,8 @@ section {
 
 .radio-game {
     margin-top: 15px;
-    border-top: 4px solid #8257E5; 
+    border-top: 4px solid #8257E5;
+    padding-top: 10px; 
 }
 
 .radio-game-input{
@@ -180,7 +181,7 @@ input[type="radio"] {
 footer {
     display: flex;
     justify-content: center;
-    margin-top: 5%;
+    margin-top: 2%;
  }
  
 .footer-content{
