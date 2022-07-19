@@ -87,7 +87,7 @@ class Minimax:
 
         v = float("-inf")
         for action in self.__actions(state, player):
-            self.metric.add_action(parent, action)
+            # self.metric.add_action(parent, action)
             v = max(v, self.__MIN(action, self.__opposite_player(player)))
 
         return v
@@ -100,7 +100,7 @@ class Minimax:
 
         v = float("inf")
         for action in self.__actions(state, player):
-            self.metric.add_action(parent, action)
+            # self.metric.add_action(parent, action)
             v = min(v, self.__MAX(action, self.__opposite_player(player)))
 
         return v

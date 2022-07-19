@@ -35,6 +35,7 @@ class Metric:
         self.nodes = []
         self.last_movement = None
         self.count = 0
+        self.avg_time = 0
         
     def save_tree(self, algorithm):
         nodes_file = self.open_nodes_file(algorithm)
@@ -77,8 +78,9 @@ class Metric:
     
     def start_duration(self):
         self.count += 1
-        self.start_time = time.time()
+        self.start_time = time.process_time()
     
     def end_duration(self):
-        self.avg_time += time.time() - self.start_time
+        diff = time.process_time() - self.start_time
+        self.avg_time += diff
     
